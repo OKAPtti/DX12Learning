@@ -1,11 +1,4 @@
-﻿#include <Windows.h>
-#include <wrl.h>
-
-#ifdef _DEBUG
-#include <iostream>
-#endif // _DEBUG
-
-//@brief コンソール画面にフォーマット付き文字列を表示.
+﻿//@brief コンソール画面にフォーマット付き文字列を表示.
 //@pram format フォーマット(%dとか%fとかの).
 //@pram 可変長引数.
 //@remarks この関数はデバッグ用です。デバッグ時にしか動作しません.
