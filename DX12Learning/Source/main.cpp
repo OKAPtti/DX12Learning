@@ -25,7 +25,7 @@ int main()
 		_ASSERT_EXPR(false, L"ウィンドウの生成に失敗");
 	}
 	
-	DXGraphic.Create(window->GetHwnd());
+	DXGraphics.Create(window->GetHwnd());
 
 	MSG msg = {};
 

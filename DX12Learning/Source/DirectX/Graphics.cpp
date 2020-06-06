@@ -4,6 +4,12 @@ namespace Alrescha
 {
 	void Graphics::Create(HWND hwnd)
 	{
+#ifdef _DEBUG
+		//デバッグレイヤーをオンに.
+		EnableDebugLayer();
+#endif // _DEBUG
+
+
 		//@brief デバイスの生成.
 		//@pram nullptr デバイス作成時に使用するビデオアダプターのポイント(nullptrの場合はデフォルト).
 		//@pram 最低限必要なフィーチャーレベル.
@@ -35,7 +41,11 @@ namespace Alrescha
 		}
 
 		//ファクトリ生成.
+#ifdef _DEBUG
+		auto result = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG,IID_PPV_ARGS(&m_DxgiFactory));
+#else
 		auto result = CreateDXGIFactory1(IID_PPV_ARGS(&m_DxgiFactory));
+#endif // _DEBUG
 
 		//アダプターの列挙用.
 		std::vector<IDXGIAdapter*> adapters;
@@ -154,6 +164,45 @@ namespace Alrescha
 			m_Deveice->CreateRenderTargetView(backBuffers[idx], nullptr, handle);
 
 		}
+
+		result = m_CmdAllocator->Reset();
+
+		//現在のバックバッファーを指すインデックスを取得.
+		auto bbIdx = m_SwapChain->GetCurrentBackBufferIndex();
+
+		auto rtvH = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+
+		rtvH.ptr += bbIdx * m_Deveice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+		m_CmdList->OMSetRenderTargets(1, &rtvH, true, nullptr);
+
+		//画面クリア.
+		float clearColor[] = { 1.0f,1.0f,0.0f,1.0f };//黄色.
+
+		m_CmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+
+		//命令のクローズ.
+		m_CmdList->Close();
+
+		//コマンドリストの実行.
+		ID3D12CommandList* cmdLists[] = { m_CmdList };
+
+		m_CmdQueue->ExecuteCommandLists(1, cmdLists);
+
+		m_CmdAllocator->Reset();//キューをクリア.
+		m_CmdList->Reset(m_CmdAllocator, nullptr);//再びコマンドリストからためる準備.
+
+		//フリップ.
+		m_SwapChain->Present(1, 0);
+
+	}
+	void Graphics::EnableDebugLayer()
+	{
+		ID3D12Debug* debugLayer = nullptr;
+		auto result = D3D12GetDebugInterface(IID_PPV_ARGS(&debugLayer));
+
+		debugLayer->EnableDebugLayer();//デバッグレイヤーを有効化する.
+		debugLayer->Release();//有効かしたらインターフェースを開放する.
 
 	}
 }
