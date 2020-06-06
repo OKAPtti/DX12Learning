@@ -2,7 +2,7 @@
 
 namespace Alrescha
 {
-	void Graphics::Create()
+	void Graphics::Create(HWND hwnd)
 	{
 		//@brief デバイスの生成.
 		//@pram nullptr デバイス作成時に使用するビデオアダプターのポイント(nullptrの場合はデフォルト).
@@ -94,6 +94,37 @@ namespace Alrescha
 		//キュー作成.
 		result = m_Deveice->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&m_CmdQueue));
 
+		//スワップチェーン作成.
+		DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
 
+		swapchainDesc.Width = 1280;
+		swapchainDesc.Height = 720;
+		swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapchainDesc.Stereo = false;
+		swapchainDesc.SampleDesc.Count = 1;
+		swapchainDesc.SampleDesc.Quality = 0;
+		swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;
+		swapchainDesc.BufferCount = 2;
+
+		//バックバッファーは伸び縮み可能.
+		swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
+
+		//フリップ後は速やかに破棄.
+		swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+		//特に指定なし.
+		swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+
+		//ウィンドウ←→フルスクリーン切り替え可能.
+		swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+		result = m_DxgiFactory->CreateSwapChainForHwnd(
+			m_CmdQueue,
+			hwnd,
+			&swapchainDesc,
+			nullptr,
+			nullptr,
+			(IDXGISwapChain1**)&m_SwapChain
+		);
 	}
 }

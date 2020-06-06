@@ -26,7 +26,7 @@ namespace Alrescha
 		const char* clsName = "DX12テスト";
 
 		//ウィンドウオブジェクト生成.
-		HWND hwnd = CreateWindow(w.lpszClassName,	//クラス名.
+		m_Hwnd = CreateWindow(w.lpszClassName,	//クラス名.
 			clsName,								//タイトルバー名.
 			WS_OVERLAPPEDWINDOW,					//タイトルバーと境界線があるウィンドウ.
 			CW_USEDEFAULT,							//表示するx座標はOSに任せる.
@@ -39,10 +39,10 @@ namespace Alrescha
 			nullptr);								//追加パラメータ.
 
 		//生成失敗.
-		if (hwnd == nullptr) return false;
+		if (m_Hwnd == nullptr) return false;
 
 		//ウィンドウ表示.
-		ShowWindow(hwnd, SW_SHOW);
+		ShowWindow(m_Hwnd, SW_SHOW);
 
 		//生成成功.
 		return true;

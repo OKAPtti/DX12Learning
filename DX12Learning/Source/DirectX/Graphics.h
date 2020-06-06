@@ -9,7 +9,7 @@ namespace Alrescha
 	{
 	public:
 		friend class Singleton<Graphics>;
-		void Create();
+		void Create(HWND hwnd);
 	private:
 		ID3D12Device* m_Deveice = nullptr;
 		IDXGIFactory6* m_DxgiFactory = nullptr;
