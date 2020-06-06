@@ -10,49 +10,19 @@ void DebugOutputFormatString(const char* format, ...)
 	vprintf(format, valist);
 	va_end(valist);
 #endif // _DEBUG
-
 }
 
-LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+#include "Window/Window.h"
+using namespace Alrescha;
 
 #ifdef _DEBUG
 int main()
 {
-	//ウィンドウクラスの生成&登録.
-	WNDCLASSEX w = {};
-
-	w.cbSize = sizeof(WNDCLASSEX);
-	w.lpfnWndProc = (WNDPROC)WindowProcedure;	//コールバック関数の指定.
-	w.lpszClassName = "DX12Sample";				//アプリケーションクラス名.
-	w.hInstance = GetModuleHandle(nullptr);		//ハンドル取得.
-
-	RegisterClassEx(&w);						//ウィンドウクラスの登録.
-
-	//ウィンドウサイズ.
-	constexpr LONG window_width = 1280;
-	constexpr LONG window_height = 720;
-	RECT wrc = { 0,0,window_width,window_height };
-
-	//ウィンドウのサイズを補正.
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
-	const char* clsName = "DX12テスト";
-
-	//ウィンドウオブジェクト生成.
-	HWND hwnd = CreateWindow(w.lpszClassName,	//クラス名.
-		clsName,								//タイトルバー名.
-		WS_OVERLAPPEDWINDOW,					//タイトルバーと境界線があるウィンドウ.
-		CW_USEDEFAULT,							//表示するx座標はOSに任せる.
-		CW_USEDEFAULT,							//表示するy座標はOSに任せる.
-		wrc.right - wrc.left,					//ウィンドウ幅.
-		wrc.bottom - wrc.top,					//ウィンドウ高.
-		nullptr,								//親ウィンドウハンドル.
-		nullptr,								//メニューハンドル.
-		w.hInstance,							//呼び出しアプリケーションハンドル.
-		nullptr);								//追加パラメータ.
-
-	//ウィンドウ表示.
-	ShowWindow(hwnd, SW_SHOW);
+	SPtr<Window> window = std::make_shared<Window>();
+	if (window->Create() == false)
+	{
+		_ASSERT_EXPR(false, L"ウィンドウの生成に失敗");
+	}
 
 	MSG msg = {};
 
@@ -69,8 +39,7 @@ int main()
 
 	}
 
-	//登録解除.
-	UnregisterClass(w.lpszClassName, w.hInstance);
+	window->Destroy();
 
 #else
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)

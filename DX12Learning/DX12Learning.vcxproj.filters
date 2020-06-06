@@ -5,7 +5,8 @@
     <ClCompile Include="Source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Pch.h" />
+    <ClInclude Include="Source\Window\Window.h" />
+    <ClInclude Include="Source\Helper.h" />
   </ItemGroup>
 </Project>
