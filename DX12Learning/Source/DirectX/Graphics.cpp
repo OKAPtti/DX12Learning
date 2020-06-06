@@ -126,5 +126,34 @@ namespace Alrescha
 			nullptr,
 			(IDXGISwapChain1**)&m_SwapChain
 		);
+
+		//ディスクリプタヒープを作成.
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;//レンダーターゲットビューなのでRTV.
+		heapDesc.NodeMask = 0;
+		heapDesc.NumDescriptors = 2;//表裏の２つ.
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;//特に指定なし.
+
+		ID3D12DescriptorHeap* rtvHeaps = nullptr;
+
+		result = m_Deveice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps));
+
+		DXGI_SWAP_CHAIN_DESC swcDesc = {};
+
+		result = m_SwapChain->GetDesc(&swcDesc);
+
+		std::vector<ID3D12Resource*> backBuffers(swcDesc.BufferCount);
+		for (int idx = 0; idx < swcDesc.BufferCount; ++idx)
+		{
+			result = m_SwapChain->GetBuffer(idx, IID_PPV_ARGS(&backBuffers[idx]));
+
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+			handle.ptr += idx * m_Deveice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+			m_Deveice->CreateRenderTargetView(backBuffers[idx], nullptr, handle);
+
+		}
+
 	}
 }
