@@ -7,8 +7,6 @@ namespace Alrescha
 		//@brief デバイスの生成.
 		//@pram nullptr デバイス作成時に使用するビデオアダプターのポイント(nullptrの場合はデフォルト).
 		//@pram 最低限必要なフィーチャーレベル.
-		//@pram 可変長引数.
-		//@remarks この関数はデバッグ用です。デバッグ時にしか動作しません.
 		//参考：https://docs.microsoft.com/ja-jp/windows/win32/api/d3d12/nf-d3d12-d3d12createdevice.
 		//==================================================
 		//IID_PPV_ARGS関数:ポインターのアドレスを引数に渡すと
@@ -67,6 +65,34 @@ namespace Alrescha
 			}
 		}
 
+		//@brief コマンドアロケーターの作成(https://docs.microsoft.com/ja-jp/windows/win32/api/d3d12/nf-d3d12-id3d12device-createcommandallocator).
+		//@pram D3D12_COMMAND_LIST_TYPE_DIRECT：コマンドリストのタイプを指定.
+		//参考：https://docs.microsoft.com/ja-jp/windows/win32/api/d3d12/ne-d3d12-d3d12_command_list_type.
+		result = m_Deveice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_CmdAllocator));
+
+		//@brief コマンドリストの作成(https://docs.microsoft.com/ja-jp/windows/win32/api/d3d12/nf-d3d12-id3d12device-createcommandlist).
+		//@pram 0 シングルGPUの動作の場合は０を指定
+		//@pram D3D12_COMMAND_LIST_TYPE_DIRECT：コマンドリストのタイプを指定.
+		//参考：https://docs.microsoft.com/ja-jp/windows/win32/api/d3d12/ne-d3d12-d3d12_command_list_type.
+		result = m_Deveice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_CmdAllocator, nullptr, IID_PPV_ARGS(&m_CmdList));
+
+		//@brief コマンドキューの作成.
+		D3D12_COMMAND_QUEUE_DESC cmdQueueDesc = {};
+
+		//タイムアウトなし.
+		cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+
+		//アダプターを１つしか使わないときは０で良い,
+		cmdQueueDesc.NodeMask = 0;
+
+		//プライオリティは特に指定なし.
+		cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+
+		//コマンドリストと合わせる.
+		cmdQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+
+		//キュー作成.
+		result = m_Deveice->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&m_CmdQueue));
 
 
 	}
