@@ -13,6 +13,7 @@ void DebugOutputFormatString(const char* format, ...)
 }
 
 #include "Window/Window.h"
+#include "DirectX/Graphics.h"
 using namespace Alrescha;
 
 #ifdef _DEBUG
@@ -23,6 +24,8 @@ int main()
 	{
 		_ASSERT_EXPR(false, L"ウィンドウの生成に失敗");
 	}
+
+	DXGraphic.Create();
 
 	MSG msg = {};
 

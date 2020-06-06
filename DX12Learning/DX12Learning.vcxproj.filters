@@ -3,10 +3,13 @@
   <ItemGroup>
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
+    <ClCompile Include="Source\DirectX\Graphics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Pch.h" />
     <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Helper.h" />
+    <ClInclude Include="Source\DirectX\Graphics.h" />
+    <ClInclude Include="Source\Singleton.h" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,9 @@ namespace Alrescha
 	}
 
 	template<class T>
+	using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	template<class T>
 	using SPtr = std::shared_ptr<T>;
 
 	template<class T>
