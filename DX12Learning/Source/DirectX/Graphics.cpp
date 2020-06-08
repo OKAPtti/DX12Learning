@@ -170,6 +170,17 @@ namespace Alrescha
 		//現在のバックバッファーを指すインデックスを取得.
 		auto bbIdx = m_SwapChain->GetCurrentBackBufferIndex();
 
+		//バリアの設定.
+		D3D12_RESOURCE_BARRIER BarrierDesc = {};
+		BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;//遷移.
+		BarrierDesc.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;//特に指定なし.
+		BarrierDesc.Transition.pResource = backBuffers[bbIdx];//バックバッファーリソース.
+		BarrierDesc.Transition.Subresource = 0;
+		BarrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;//直前はPRESENT状態.
+		BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;//今からレンダーターゲット状態.
+
+		m_CmdList->ResourceBarrier(1, &BarrierDesc);//バリア指定実行.
+
 		auto rtvH = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
 
 		rtvH.ptr += bbIdx * m_Deveice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
