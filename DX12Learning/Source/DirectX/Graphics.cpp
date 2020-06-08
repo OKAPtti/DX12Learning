@@ -195,6 +195,28 @@ namespace Alrescha
 		//フリップ.
 		m_SwapChain->Present(1, 0);
 
+		//フェンス作成.
+		ID3D12Fence* fence = nullptr;
+		UINT64 fenceValue = 0;
+
+		result = m_Deveice->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+
+		m_CmdQueue->Signal(fence, ++fenceValue);
+
+		if (fence->GetCompletedValue() != fenceValue)
+		{
+			//イベントハンドルの取得.
+			auto event = CreateEvent(nullptr, false, false, nullptr);
+
+			fence->SetEventOnCompletion(fenceValue, event);
+
+			//イベントが発生するまで待ち続ける.
+			WaitForSingleObject(event, INFINITE);
+
+			CloseHandle(event);
+
+		}
+
 	}
 	void Graphics::EnableDebugLayer()
 	{
